@@ -132,8 +132,7 @@ def main():
 
         serializer.save(
             product_folder,
-            product_row,
-            product_images
+            product
         )
 
         for index, url in enumerate(product.images, start=1):

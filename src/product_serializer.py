@@ -2,6 +2,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 from html_utils import html_to_text
 from html_rewriter import HtmlRewriter
+from dataclasses import asdict
 import json
 import re
 
@@ -20,34 +21,54 @@ class ProductSerializer:
 
         return name.strip()
 
-    def save(self, product_folder, product_row, images):
+    def save(
+            self,
+            product_folder,
+            product
+    ):
+        self._save_json(
+            product_folder,
+            product
+        )
 
-        product_data = {}
+        self._save_html(
+            product_folder,
+            product
+        )
 
-        for column in product_row.index:
+    def _save_json(
+            self,
+            product_folder,
+            product
+    ):
+        data = asdict(product)
 
-            value = product_row[column]
-
-            if hasattr(value, "item"):
-                value = value.item()
-
-            if str(value) == "nan":
-                value = ""
-            if isinstance(value, str) and "<" in value and ">" in value:
-
-                product_data[column] = html_to_text(value)
-
-            else:
-
-                product_data[column] = value
+        data["Descriere produs"] = html_to_text(
+            product.description_html
+        )
 
         output = product_folder / "product.json"
 
-        description = str(
-            product_row["Descriere produs"]
-        )
+        with open(output, "w", encoding="utf-8") as f:
 
-        description = HtmlRewriter.rewrite(description)
+            json.dump(
+                data,
+                f,
+                ensure_ascii=False,
+                indent=4
+            )
+
+        print(f"[JSON] {output}")
+
+    def _save_html(
+            self,
+            product_folder,
+            product
+    ):
+    
+        description = HtmlRewriter.rewrite(
+            product.description_html
+        )
 
         description_file = (
             product_folder /
@@ -57,15 +78,4 @@ class ProductSerializer:
         description_file.write_text(
             description,
             encoding="utf-8"
-        )
-
-        with open(output, "w", encoding="utf-8") as f:
-
-            json.dump(
-                product_data,
-                f,
-                ensure_ascii=False,
-                indent=4
-            )
-
-        print(f"[JSON] {output}")
+        )   
