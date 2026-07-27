@@ -11,10 +11,7 @@ class Downloader:
         self.output = Path(output_folder)
         self.output.mkdir(exist_ok=True)
 
-    def download(self, product_id: int, url: str):
-
-        product_folder = self.output / str(product_id)
-        product_folder.mkdir(exist_ok=True)
+    def download(self, product_folder, url):
 
         filename = Path(urlparse(url).path).name
 

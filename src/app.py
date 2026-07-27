@@ -3,11 +3,14 @@ MerchantPro Backup Tool
 
 Main entry point.
 """
+print("START")
 
 from excel_reader import ExcelReader
 from file_picker import select_excel_file
 from downloader import Downloader
 from validator import Validator
+from product_serializer import ProductSerializer
+from product_factory import ProductFactory
 
 def banner():
     print("=" * 60)
@@ -73,6 +76,7 @@ def main():
 
     print()
     downloader = Downloader()
+    serializer = ProductSerializer()
 
     print()
     print("=" * 60)
@@ -82,27 +86,54 @@ def main():
 
     downloaded = 0
 
-    for product_id, urls in image_map.items():
+    for _, product_row in reader.products.iterrows():
 
-        print(f"Product {product_id}: {len(urls)} image(s)")
+        product_id = int(product_row["ID produs"])
 
-        for url in urls:
+        product_name = serializer.sanitize_filename(
+            str(product_row["Nume produs"])
+        )
 
-            downloader.download(product_id, url)
+        product_folder = (
+            serializer.output /
+            f"{product_id} - {product_name}"
+        )
+
+        product_folder.mkdir(exist_ok=True)
+
+        images = image_map.get(product_id, [])
+
+        # momentan doar verificăm că ProductFactory funcționează
+        product = ProductFactory.from_excel(
+            product_row,
+            images
+        )
+
+        serializer.save(
+            product_folder,
+            product_row,
+            images
+        )
+
+        for url in images:
+
+            downloader.download(
+                product_folder,
+                url
+            )
+
             downloaded += 1
-
+            
     print()
     print("=" * 60)
     print("SUMMARY")
     print("=" * 60)
+    print()
+
     print(f"Products with images : {len(image_map)}")
     print(f"Total image URLs     : {downloaded}")
     print()
     print("Done.")
-
-    print()
-    print("Downloading first image...")
-    print()
 
     print(f"Products with images: {len(image_map)}")
 
