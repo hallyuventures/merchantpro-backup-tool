@@ -22,7 +22,7 @@ class ProductSerializer:
 
     def save(self, product_folder, product_row, images):
 
-        data = {}
+        product_data = {}
 
         for column in product_row.index:
 
@@ -35,20 +35,11 @@ class ProductSerializer:
                 value = ""
             if isinstance(value, str) and "<" in value and ">" in value:
 
-                data[column] = html_to_text(value)
+                product_data[column] = html_to_text(value)
 
             else:
 
-                data[column] = value
-
-        image_files = []
-
-        for url in images:
-
-            filename = Path(urlparse(url).path).name
-            image_files.append(filename)
-
-        data["Imagini locale"] = image_files
+                product_data[column] = value
 
         output = product_folder / "product.json"
 
@@ -71,7 +62,7 @@ class ProductSerializer:
         with open(output, "w", encoding="utf-8") as f:
 
             json.dump(
-                data,
+                product_data,
                 f,
                 ensure_ascii=False,
                 indent=4

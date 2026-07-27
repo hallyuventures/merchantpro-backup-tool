@@ -110,34 +110,33 @@ def main():
         product_images_folder.mkdir(exist_ok=True)
         description_images_folder.mkdir(exist_ok=True)
         
-        images = image_map.get(product_id, [])
-        html_images = HtmlImageExtractor.extract(
+        product_images = image_map.get(product_id, [])
+
+        description_images = HtmlImageExtractor.extract(
             str(product_row["Descriere produs"])
         )
 
-        images.extend(html_images)
-        images = list(dict.fromkeys(images))
-
-        if html_images:
+        if description_images:
 
             print(
                 f"Product {product_id}: "
-                f"+{len(html_images)} image(s) from HTML"
+                f"+{len(description_images)} image(s) from HTML"
             )
 
         # momentan doar verificăm că ProductFactory funcționează
         product = ProductFactory.from_excel(
             product_row,
-            images
+            product_images,
+            description_images
         )
 
         serializer.save(
             product_folder,
             product_row,
-            images
+            product_images
         )
 
-        for index, url in enumerate(images, start=1):
+        for index, url in enumerate(product.images, start=1):
 
             extension = Path(urlparse(url).path).suffix.lower()
 
@@ -154,7 +153,7 @@ def main():
 
             downloaded += 1
 
-        for index, url in enumerate(html_images, start=1):
+        for index, url in enumerate(product.description_images, start=1):
 
             extension = Path(urlparse(url).path).suffix.lower()
 

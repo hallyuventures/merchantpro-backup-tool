@@ -4,7 +4,11 @@ from product import Product
 class ProductFactory:
 
     @staticmethod
-    def from_excel(row, images):
+    def from_excel(
+        row,
+        product_images,
+        description_images
+        ):
 
         return Product(
 
@@ -34,5 +38,11 @@ class ProductFactory:
 
             extra_info=str(row["Informatii suplimentare"]),
 
-            images=images,
+            images=product_images,
+
+            description_images=description_images,
+
+            description_html=str(
+                row["Descriere produs"]
+            ),
         )

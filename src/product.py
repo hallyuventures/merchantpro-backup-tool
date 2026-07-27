@@ -23,3 +23,5 @@ class Product:
     extra_info: str
 
     images: list[str] = field(default_factory=list)
+    description_images: list[str] = field(default_factory=list)
+    description_html: str = ""
