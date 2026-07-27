@@ -1,1 +1,2 @@
 # merchantpro-backup-tool
+# MerchantPro Toolkit is designed to preserve data exactly as exported by MerchantPro. The toolkit does not reinterpret or modify product data; it creates a faithful backup that can be used for validation, restoration and label generation.

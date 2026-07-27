@@ -11,6 +11,9 @@ from downloader import Downloader
 from validator import Validator
 from product_serializer import ProductSerializer
 from product_factory import ProductFactory
+from html_image_extractor import HtmlImageExtractor
+from pathlib import Path
+from urllib.parse import urlparse
 
 def banner():
     print("=" * 60)
@@ -101,7 +104,26 @@ def main():
 
         product_folder.mkdir(exist_ok=True)
 
+        product_images_folder = product_folder / "product_images"
+        description_images_folder = product_folder / "description_images"
+
+        product_images_folder.mkdir(exist_ok=True)
+        description_images_folder.mkdir(exist_ok=True)
+        
         images = image_map.get(product_id, [])
+        html_images = HtmlImageExtractor.extract(
+            str(product_row["Descriere produs"])
+        )
+
+        images.extend(html_images)
+        images = list(dict.fromkeys(images))
+
+        if html_images:
+
+            print(
+                f"Product {product_id}: "
+                f"+{len(html_images)} image(s) from HTML"
+            )
 
         # momentan doar verificăm că ProductFactory funcționează
         product = ProductFactory.from_excel(
@@ -115,15 +137,41 @@ def main():
             images
         )
 
-        for url in images:
+        for index, url in enumerate(images, start=1):
+
+            extension = Path(urlparse(url).path).suffix.lower()
+
+            if not extension:
+                extension = ".jpg"
+
+            filename = f"{index:03d}{extension}"
 
             downloader.download(
-                product_folder,
-                url
+                product_images_folder,
+                url,
+                filename
             )
 
             downloaded += 1
-            
+
+        for index, url in enumerate(html_images, start=1):
+
+            extension = Path(urlparse(url).path).suffix.lower()
+
+            if not extension:
+                extension = ".jpg"
+
+            filename = f"{index:03d}{extension}"
+
+            downloader.download(
+                description_images_folder,
+                url,
+                filename
+            )
+
+            downloaded += 1
+
+           
     print()
     print("=" * 60)
     print("SUMMARY")

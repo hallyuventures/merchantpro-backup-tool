@@ -11,11 +11,11 @@ class Downloader:
         self.output = Path(output_folder)
         self.output.mkdir(exist_ok=True)
 
-    def download(self, product_folder, url):
+    def download(self, folder, url, filename=None):
+        if filename is None:
+            filename = Path(urlparse(url).path).name
 
-        filename = Path(urlparse(url).path).name
-
-        destination = product_folder / filename
+        destination = folder / filename
 
         if destination.exists():
             print(f"[SKIP] {filename}")

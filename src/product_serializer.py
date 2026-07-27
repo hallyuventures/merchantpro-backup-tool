@@ -1,6 +1,7 @@
 from pathlib import Path
 from urllib.parse import urlparse
 from html_utils import html_to_text
+from html_rewriter import HtmlRewriter
 import json
 import re
 
@@ -50,6 +51,22 @@ class ProductSerializer:
         data["Imagini locale"] = image_files
 
         output = product_folder / "product.json"
+
+        description = str(
+            product_row["Descriere produs"]
+        )
+
+        description = HtmlRewriter.rewrite(description)
+
+        description_file = (
+            product_folder /
+            "description.html"
+        )
+
+        description_file.write_text(
+            description,
+            encoding="utf-8"
+        )
 
         with open(output, "w", encoding="utf-8") as f:
 
