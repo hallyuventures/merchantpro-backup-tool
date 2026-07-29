@@ -10,6 +10,7 @@ from .blocks.title_block import TitleBlock
 from .blocks.country_block import CountryBlock
 from .blocks.expiry_block import ExpiryBlock
 from .blocks.ingredients_block import IngredientsBlock
+from .blocks.allergens_block import AllergensBlock
 
 class LabelEngine:
 
@@ -75,8 +76,12 @@ class LabelEngine:
             ),
             (
                 IngredientsBlock(product, self.context),
-                0,
+                section_spacing_px,
             ),
+            (
+                AllergensBlock(product, self.context),
+                0,
+            )
         ]
 
         measured_blocks = []

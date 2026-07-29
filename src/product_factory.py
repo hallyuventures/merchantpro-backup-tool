@@ -30,6 +30,8 @@ class ProductFactory:
 
             ingredients=str(row["Ingrediente/Alergeni"]),
 
+            allergens=str(row["Alergeni"]),
+
             nutrition=str(row["Valori nutritionale"]),
 
             usage=str(row["Mod utilizare"]),

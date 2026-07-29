@@ -17,6 +17,7 @@ class Product:
     weight: str
 
     ingredients: str
+    allergens: str
     nutrition: str
     usage: str
     expiry: str
