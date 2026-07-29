@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+from ..layout import BlockLayout
+
 
 class BaseBlock(ABC):
 
@@ -7,11 +9,18 @@ class BaseBlock(ABC):
         self.product = product
 
     @abstractmethod
-    def measure(self, context):
-        """Returnează înălțimea blocului în pixeli."""
-        pass
+    def measure(self, context) -> BlockLayout:
+        """Calculează și returnează layout-ul blocului."""
+        raise NotImplementedError
 
     @abstractmethod
-    def render(self, draw, x, y, context):
-        """Desenează blocul la coordonatele x, y."""
-        pass
+    def render(
+        self,
+        draw,
+        x: int,
+        y: int,
+        layout: BlockLayout,
+        context,
+    ) -> None:
+        """Desenează blocul folosind layout-ul deja calculat."""
+        raise NotImplementedError
