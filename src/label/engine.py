@@ -92,6 +92,9 @@ class LabelEngine:
                 self.context,
             )
 
+            if layout.height == 0:
+                continue
+
             measured_blocks.append(
                 (
                     block,
@@ -99,6 +102,17 @@ class LabelEngine:
                     spacing_after,
                 )
             )
+
+        if measured_blocks:
+            last_block, last_layout, _ = measured_blocks[-1]
+
+            measured_blocks[-1] = (
+                last_block,
+                last_layout,
+                0,
+            )
+
+
 
         content_height = (
             margin_px
