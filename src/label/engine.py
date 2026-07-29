@@ -41,37 +41,6 @@ class LabelEngine:
             self.printer.min_length_mm
         )
 
-        # imagine temporara pentru masurare
-        temp_image = Image.new("RGB", (width, 2000), "white")
-        temp_draw = ImageDraw.Draw(temp_image)
-
-        title_block = TitleBlock(product, self.context)
-        country_block = CountryBlock(product, self.context)
-        expiry_block = ExpiryBlock(product, self.context)
-        ingredients_block = IngredientsBlock(product, self.context)
-
-        title_layout = title_block.measure(
-            temp_draw,
-            self.context
-        )
-
-        country_layout = country_block.measure(
-            temp_draw,
-            self.context
-        )
-
-        expiry_layout = expiry_block.measure(
-            temp_draw,
-            self.context
-        )
-
-        ingredients_layout = ingredients_block.measure(
-            temp_draw,
-            self.context
-        )
-
-
-
         title_spacing_px = self.context.mm_to_px(
             self.context.style.title_spacing_mm
         )
@@ -84,75 +53,84 @@ class LabelEngine:
             self.context.style.bottom_spacing_mm
         )
 
+        temp_image = Image.new(
+            "RGB",
+            (width, 2000),
+            "white",
+        )
+        temp_draw = ImageDraw.Draw(temp_image)
+
+        blocks = [
+            (
+                TitleBlock(product, self.context),
+                title_spacing_px,
+            ),
+            (
+                CountryBlock(product, self.context),
+                section_spacing_px,
+            ),
+            (
+                ExpiryBlock(product, self.context),
+                section_spacing_px,
+            ),
+            (
+                IngredientsBlock(product, self.context),
+                0,
+            ),
+        ]
+
+        measured_blocks = []
+
+        for block, spacing_after in blocks:
+            layout = block.measure(
+                temp_draw,
+                self.context,
+            )
+
+            measured_blocks.append(
+                (
+                    block,
+                    layout,
+                    spacing_after,
+                )
+            )
 
         content_height = (
             margin_px
-            + title_layout.height
-            + title_spacing_px
-            + country_layout.height
-            + section_spacing_px
-            + expiry_layout.height
-            + section_spacing_px
-            + ingredients_layout.height
+            + sum(
+                layout.height + spacing_after
+                for _, layout, spacing_after in measured_blocks
+            )
             + bottom_spacing_px
             + margin_px
         )
 
         final_height = max(
             content_height,
-            min_height_px
+            min_height_px,
         )
 
         image = Image.new(
             "RGB",
             (width, final_height),
-            "white"
+            "white",
         )
 
         draw = ImageDraw.Draw(image)
 
         current_y = margin_px
 
-        title_block.render(
-            draw=draw,
-            x=margin_px,
-            y=current_y,
-            layout=title_layout,
-            context=self.context,
-        )
+        for block, layout, spacing_after in measured_blocks:
+            block.render(
+                draw=draw,
+                x=margin_px,
+                y=current_y,
+                layout=layout,
+                context=self.context,
+            )
 
-        current_y += title_layout.height
-        current_y += title_spacing_px
-
-        country_block.render(
-            draw=draw,
-            x=margin_px,
-            y=current_y,
-            layout=country_layout,
-            context=self.context,
-        )
-
-        current_y += country_layout.height
-        current_y += section_spacing_px
-
-        expiry_block.render(
-            draw=draw,
-            x=margin_px,
-            y=current_y,
-            layout=expiry_layout,
-            context=self.context,
-        )
-
-        current_y += expiry_layout.height
-        current_y += section_spacing_px
-
-        ingredients_block.render(
-            draw=draw,
-            x=margin_px,
-            y=current_y,
-            layout=ingredients_layout,
-            context=self.context,
-        )
+            current_y += layout.height
+            current_y += spacing_after
 
         output = Path(output_path)
         image.save(output)

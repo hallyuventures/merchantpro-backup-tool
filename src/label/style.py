@@ -13,4 +13,4 @@ class LabelStyle:
     title_spacing_mm: float = 1.5
     section_spacing_mm: float = 0.5
     bottom_spacing_mm: float = 0.75
-    line_spacing_mm: float = 1.0
+    line_spacing_mm: float = 0.3
