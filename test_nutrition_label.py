@@ -35,6 +35,7 @@ product = Product(
     ingredients="Apa, faina, zahar, sare",
     allergens="GRAU",
     nutrition=nutrition_html,
+    preparation="",  
     usage="",
     expiry="A se vedea pe ambalaj.",
     extra_info="",

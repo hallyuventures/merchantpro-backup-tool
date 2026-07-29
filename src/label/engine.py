@@ -14,6 +14,7 @@ from .blocks.allergens_block import AllergensBlock
 from .blocks.usage_block import UsageBlock
 from .blocks.extra_info_block import ExtraInfoBlock
 from .blocks.nutrition_block import NutritionBlock
+from .blocks.preparation_block import PreparationBlock
 
 class LabelEngine:
 
@@ -87,6 +88,10 @@ class LabelEngine:
             ),
             (
                 NutritionBlock(product, self.context),
+                section_spacing_px,
+            ),
+            (
+                PreparationBlock(product, self.context),
                 section_spacing_px,
             ),
             (

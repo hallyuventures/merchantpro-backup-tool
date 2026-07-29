@@ -19,6 +19,7 @@ class Product:
     ingredients: str
     allergens: str
     nutrition: str
+    preparation : str
     usage: str
     expiry: str
     extra_info: str

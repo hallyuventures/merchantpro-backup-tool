@@ -34,6 +34,8 @@ class ProductFactory:
 
             nutrition=str(row["Valori nutritionale"]),
 
+            preparation=str(row["Mod de preparare"]),
+            
             usage=str(row["Mod utilizare"]),
 
             expiry=str(row["Data expirare"]),
