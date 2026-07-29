@@ -39,6 +39,7 @@ product = Product(
     usage="",
     expiry="A se vedea pe ambalaj.",
     extra_info="",
+    importer_distributor="",
 )
 
 

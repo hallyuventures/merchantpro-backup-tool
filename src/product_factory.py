@@ -42,6 +42,8 @@ class ProductFactory:
 
             extra_info=str(row["Informatii suplimentare"]),
 
+            importer_distribuitor="",
+            
             images=product_images,
 
             description_images=description_images,

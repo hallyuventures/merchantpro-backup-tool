@@ -19,10 +19,11 @@ class Product:
     ingredients: str
     allergens: str
     nutrition: str
-    preparation : str
+    preparation: str
     usage: str
     expiry: str
     extra_info: str
+    importer_distributor: str
 
     images: list[str] = field(default_factory=list)
     description_images: list[str] = field(default_factory=list)
