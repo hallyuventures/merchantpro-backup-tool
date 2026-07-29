@@ -32,6 +32,7 @@ product = Product(
     price=0,
     country="Coreea de Sud",
     weight="100g",
+    alcohol_content="",
     ingredients="Apa, faina, zahar, sare",
     allergens="GRAU",
     nutrition=nutrition_html,

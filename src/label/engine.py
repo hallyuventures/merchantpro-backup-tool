@@ -16,6 +16,7 @@ from .blocks.extra_info_block import ExtraInfoBlock
 from .blocks.nutrition_block import NutritionBlock
 from .blocks.preparation_block import PreparationBlock
 from .blocks.importer_block import ImporterBlock
+from .blocks.alcohol_block import AlcoholBlock
 
 class LabelEngine:
 
@@ -74,6 +75,10 @@ class LabelEngine:
             (
                 CountryBlock(product, self.context),
                 section_spacing_px,
+            ),
+            (
+                AlcoholBlock(product, self.context),
+                section_spacing_px,  
             ),
             (
                 ExpiryBlock(product, self.context),

@@ -15,7 +15,7 @@ class Product:
 
     country: str
     weight: str
-
+    alcohol_content: str
     ingredients: str
     allergens: str
     nutrition: str
