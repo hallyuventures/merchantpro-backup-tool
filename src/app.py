@@ -12,6 +12,8 @@ from validator import Validator
 from product_serializer import ProductSerializer
 from product_factory import ProductFactory
 from html_image_extractor import HtmlImageExtractor
+from label_builder import LabelBuilder
+from label_preview import LabelPreview
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -78,8 +80,10 @@ def main():
         )
 
     print()
+
     downloader = Downloader()
     serializer = ProductSerializer()
+    preview = LabelPreview()
 
     print()
     print("=" * 60)
@@ -130,10 +134,17 @@ def main():
             description_images
         )
 
+        builder = LabelBuilder()
+        preview.create(product)
+
+        break
+
         serializer.save(
             product_folder,
             product
         )
+
+        builder.build(product)
 
         for index, url in enumerate(product.images, start=1):
 
