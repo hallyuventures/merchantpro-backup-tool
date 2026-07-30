@@ -7,11 +7,15 @@
     "price": 19.0,
     "country": "nan",
     "weight": "nan",
+    "alcohol_content": "",
     "ingredients": "nan",
+    "allergens": "",
     "nutrition": "nan",
+    "preparation": "nan",
     "usage": "nan",
     "expiry": "nan",
     "extra_info": "nan",
+    "importer_distributor": "",
     "images": [
         "https://f.cdnmp.net/348087814/p/l/4/1280x1280-webp~107835774.jpg",
         "https://f.cdnmp.net/348087814/p/l/7/91ia0mma65l-sl1500-jpg~107835777.jpg"

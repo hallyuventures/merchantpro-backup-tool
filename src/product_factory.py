@@ -24,25 +24,47 @@ class ProductFactory:
 
             price=float(row["Pret produs"]),
 
-            country=str(row["Produs in"]),
+            country=str(
+                row.get("Produs in", "")
+            ),
 
-            weight=str(row["Greutate/Volum"]),
-
-            ingredients=str(row["Ingrediente/Alergeni"]),
-
-            allergens=str(row["Alergeni"]),
-
-            nutrition=str(row["Valori nutritionale"]),
-
-            preparation=str(row["Mod de preparare"]),
+            weight=str(
+                row.get("Greutate/Volum", "")
+            ),
             
-            usage=str(row["Mod utilizare"]),
+            alcohol_content=str(
+                row.get("Continut alcool", "")
+            ),
 
-            expiry=str(row["Data expirare"]),
+            ingredients=str(
+                row.get("Ingrediente/Alergeni", "")
+            ),
 
-            extra_info=str(row["Informatii suplimentare"]),
+            allergens="",
 
-            importer_distribuitor="",
+            nutrition=str(
+                row.get("Valori nutritionale", "")
+            ),
+
+            preparation=str(
+                row.get("Mod preparare", "")
+            ),
+            
+            usage=str(
+                row.get("Mod utilizare", "")
+            ),
+
+            expiry=str(
+                row.get("Data expirare", "")
+            ),
+
+            extra_info=str(
+                row.get("Informatii suplimentare", "")
+            ),
+
+            importer_distributor=str(
+                row.get("Importator/Distribuitor", "")
+            ),
             
             images=product_images,
 

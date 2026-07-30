@@ -7,11 +7,15 @@
     "price": 20.0,
     "country": "<div><span style=\"color: #000000; font-size: 14pt;\">Coreea de Sud</span></div>",
     "weight": "<div><span style=\"color: #000000; font-size: 14pt;\">290g</span></div>",
+    "alcohol_content": "",
     "ingredients": "<div><span style=\"font-size: 14pt; color: #000000;\"><strong>Ingrediente:&nbsp;</strong>Pasta de ardei rosu fermentata 63% (apa, zahar, orez, pulbere de ardei rosu 8,7%, otet, sare, pudra de orez, alcool distilat, usturoi, ceapa, Koji, amilaza), sos de&nbsp;<strong>soia&nbsp;</strong>(sos de&nbsp;<strong>soia</strong>,&nbsp;<strong>soia</strong> degresata), <strong>grau</strong> (sare, <strong>grau</strong> Bran), apa, alcool distilat, sare, zahar, ceapa, usturoi, apa, alcool distilat.</span></div>\n<div><span style=\"color: #000000; font-size: 14pt;\"></span></div>\n<div><span style=\"font-size: 14pt; color: #000000;\"><strong>Alergeni: Contine soia, grau. Poate contine urme de: crustacee, soluste, susan.</strong></span></div>",
+    "allergens": "",
     "nutrition": "<div><span style=\"font-size: 14pt; color: #000000;\"><strong>Valori tipice per 100g</strong></span></div>\n<div><span style=\"font-size: 14pt; color: #000000;\"><strong>Valoare energetica </strong>770kJ / 182kcal</span></div>\n<div><span style=\"font-size: 14pt; color: #000000;\"><strong>Grasimi</strong> 1,7g</span></div>\n<div><span style=\"color: #000000; font-size: 14pt;\">din care&nbsp;<strong>acizi grasi</strong> <strong>saturati </strong>0,3g</span></div>\n<div><span style=\"font-size: 14pt; color: #000000;\"><strong>Glucide </strong>37g</span></div>\n<div><span style=\"color: #000000; font-size: 14pt;\">din care&nbsp;<strong>zaharuri&nbsp;</strong>31g</span></div>\n<div><span style=\"font-size: 14pt; color: #000000;\"><strong>Fibre&nbsp;</strong>2,9g</span></div>\n<div><span style=\"font-size: 14pt; color: #000000;\"><strong>Proteine&nbsp;</strong>3,5g</span></div>\n<div><span style=\"font-size: 14pt; color: #000000;\"><strong>Sare&nbsp;</strong> 4,1g</span></div>",
+    "preparation": "nan",
     "usage": "<div><span style=\"font-size: 14pt; color: #000000;\">Se utilizeaza ca baza picanta si aromata pentru sosuri, marinade sau mancaruri traditionale coreene (precum tteokbokki ori bibimbap), adaugat direct in supe si tocane, sau ca dip (sos de scufundare) pentru fripturi si legume.</span></div>",
     "expiry": "<div><span style=\"color: #000000; font-size: 14pt;\">A se vedea pe ambalaj.</span></div>",
     "extra_info": "<div><span style=\"color: #000000; font-size: 14pt;\">A se pastra in loc <strong>racoros</strong>, <strong>feri</strong>t <strong>de razele solare</strong>.&nbsp;</span></div>\n<div><span style=\"color: #000000; font-size: 14pt;\">Dupa deschidere se pastreaza la&nbsp;<strong>frigider.</strong></span></div>",
+    "importer_distributor": "",
     "images": [
         "https://f.cdnmp.net/348087814/p/l/0/bibigo-gochujang-red-pepper-sauce-290g-jpg~107835030.jpg",
         "https://f.cdnmp.net/348087814/p/l/3/91ia0mma65l-sl1500-jpg~107835033.jpg"
