@@ -15,7 +15,7 @@ class NutritionBlock(BaseBlock):
         )
 
         self.body_font_size = (
-            context.style.body_font_size
+            context.style.nutrition_font_size
         )
 
     def _load_font(
@@ -68,7 +68,7 @@ class NutritionBlock(BaseBlock):
         )
 
         padding_px = context.mm_to_px(
-            context.style.padding_mm
+            context.style.nutrition_padding_mm
         )
 
         body_font = self._load_font(

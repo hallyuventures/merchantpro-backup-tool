@@ -203,15 +203,19 @@ class TitleBlock(BaseBlock):
         font = layout.data["font"]
         lines = layout.data["lines"]
         line_height = layout.data["line_height"]
-        weight_width = layout.data[
-            "weight_width"
-        ]
+        weight_width = layout.data["weight_width"]
 
         current_y = y
 
         for line in lines:
+            left, top, right, bottom = draw.textbbox(
+                (0, 0),
+                line,
+                font=font,
+            )
+
             draw.text(
-                (x, current_y),
+                (x, current_y - top),
                 line,
                 font=font,
                 fill="black",
@@ -225,9 +229,14 @@ class TitleBlock(BaseBlock):
                 + layout.width
                 - weight_width
             )
+            left, top, right, bottom = draw.textbbox(
+                (0, 0),
+                self.weight,
+                font=font,
+            )
 
             draw.text(
-                (weight_x, y),
+                (weight_x, y - top),
                 self.weight,
                 font=font,
                 fill="black",

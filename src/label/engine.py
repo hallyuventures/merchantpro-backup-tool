@@ -8,7 +8,6 @@ from .printer import BROTHER_QL600, Printer
 from .style import LabelStyle
 from .blocks.title_block import TitleBlock
 from .blocks.country_block import CountryBlock
-from .blocks.expiry_block import ExpiryBlock
 from .blocks.ingredients_block import IngredientsBlock
 from .blocks.allergens_block import AllergensBlock
 from .blocks.usage_block import UsageBlock
@@ -79,10 +78,6 @@ class LabelEngine:
             (
                 AlcoholBlock(product, self.context),
                 section_spacing_px,  
-            ),
-            (
-                ExpiryBlock(product, self.context),
-                section_spacing_px,
             ),
             (
                 IngredientsBlock(product, self.context),
