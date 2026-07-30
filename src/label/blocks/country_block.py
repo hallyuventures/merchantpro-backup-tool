@@ -37,13 +37,13 @@ class CountryBlock(BaseBlock):
             return ImageFont.load_default()
 
     @staticmethod
-    def _text_size(
+    def _text_metrics(
         draw,
         text,
         font,
-    ) -> tuple[int, int]:
+    ) -> tuple[int, int, int]:
         if not text:
-            return 0, 0
+            return 0, 0, 0
 
         left, top, right, bottom = draw.textbbox(
             (0, 0),
@@ -51,13 +51,24 @@ class CountryBlock(BaseBlock):
             font=font,
         )
 
-        return right - left, bottom - top
+        return (
+            right - left,
+            bottom - top,
+            top,
+        )
 
     def measure(
         self,
         draw,
         context,
     ) -> BlockLayout:
+        if not self.country_text and not self.expiry_text:
+            return BlockLayout(
+                width=0,
+                height=0,
+                data={},
+            )
+
         font = self._load_font()
 
         margin_px = context.mm_to_px(
@@ -69,34 +80,72 @@ class CountryBlock(BaseBlock):
             - 2 * margin_px
         )
 
-        country_width, country_height = (
-            self._text_size(
-                draw,
-                self.country_text,
-                font,
+        gap_px = context.mm_to_px(2.0)
+
+        (
+            country_width,
+            country_height,
+            country_top,
+        ) = self._text_metrics(
+            draw,
+            self.country_text,
+            font,
+        )
+
+        (
+            expiry_width,
+            expiry_height,
+            expiry_top,
+        ) = self._text_metrics(
+            draw,
+            self.expiry_text,
+            font,
+        )
+
+        same_line = (
+            bool(self.country_text)
+            and bool(self.expiry_text)
+            and (
+                country_width
+                + gap_px
+                + expiry_width
+                <= available_width
             )
         )
 
-        expiry_width, expiry_height = (
-            self._text_size(
-                draw,
-                self.expiry_text,
-                font,
-            )
-        )
-
-        height = max(
+        line_height = max(
             country_height,
             expiry_height,
         )
+
+        line_spacing_px = context.mm_to_px(
+            context.style.line_spacing_mm
+        )
+
+        if same_line:
+            height = line_height
+        elif self.country_text and self.expiry_text:
+            height = (
+                country_height
+                + line_spacing_px
+                + expiry_height
+            )
+        else:
+            height = line_height
 
         return BlockLayout(
             width=available_width,
             height=height,
             data={
                 "font": font,
+                "same_line": same_line,
                 "country_width": country_width,
+                "country_height": country_height,
+                "country_top": country_top,
                 "expiry_width": expiry_width,
+                "expiry_height": expiry_height,
+                "expiry_top": expiry_top,
+                "line_spacing_px": line_spacing_px,
             },
         )
 
@@ -108,46 +157,68 @@ class CountryBlock(BaseBlock):
         layout: BlockLayout,
         context,
     ) -> None:
+        if layout.height == 0:
+            return
+
         font = layout.data["font"]
+        same_line = layout.data["same_line"]
+
+        if same_line:
+            if self.country_text:
+                draw.text(
+                    (
+                        x,
+                        y - layout.data["country_top"],
+                    ),
+                    self.country_text,
+                    font=font,
+                    fill="black",
+                )
+
+            if self.expiry_text:
+                expiry_x = (
+                    x
+                    + layout.width
+                    - layout.data["expiry_width"]
+                )
+
+                draw.text(
+                    (
+                        expiry_x,
+                        y - layout.data["expiry_top"],
+                    ),
+                    self.expiry_text,
+                    font=font,
+                    fill="black",
+                )
+
+            return
+
+        current_y = y
 
         if self.country_text:
-            left, top, right, bottom = draw.textbbox(
-                (0, 0),
-                self.country_text,
-                font=font,
-            )
-
             draw.text(
                 (
                     x,
-                    y - top,
+                    current_y
+                    - layout.data["country_top"],
                 ),
                 self.country_text,
                 font=font,
                 fill="black",
             )
 
+            current_y += (
+                layout.data["country_height"]
+                + layout.data["line_spacing_px"]
+            )
+
         if self.expiry_text:
-            expiry_width = layout.data[
-                "expiry_width"
-            ]
-
-            expiry_x = (
-                x
-                + layout.width
-                - expiry_width
-            )
-
-            left, top, right, bottom = draw.textbbox(
-                (0, 0),
-                self.expiry_text,
-                font=font,
-            )
-
             draw.text(
                 (
-                    expiry_x,
-                    y - top,
+                    x,
+                    current_y
+                    - layout.data["expiry_top"],
                 ),
                 self.expiry_text,
                 font=font,
