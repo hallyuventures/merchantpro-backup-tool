@@ -1,0 +1,129 @@
+{
+  "panasia-handels-gmbh": {
+    "display_name": "PANASIA Handels GmbH",
+    "roles": [
+      "food_importer_eu",
+      "food_responsible_operator"
+    ],
+    "address": {
+      "street": "Landstrasse 38",
+      "postal_code": "A-2464",
+      "city": "Gottlesbrunn",
+      "country": "Austria"
+    },
+    "phone": "",
+    "email": "",
+    "notes": "Date preluate de pe ambalajul original."
+  },
+  "front-row-inc": {
+    "display_name": "Front Row Inc SRL",
+    "roles": [
+      "supplier",
+      "distributor_ro"
+    ],
+    "address": {
+      "street": "Str. Campul Pipera nr. 125",
+      "postal_code": "",
+      "city": "Voluntari",
+      "country": "Romania"
+    },
+    "phone": "",
+    "email": "",
+    "notes": "Furnizor direct K-Goodies."
+  },
+  "mirasia-food": {
+    "display_name": "Mirasia Food SRL",
+    "roles": [
+      "supplier",
+      "distributor_ro"
+    ],
+    "address": {
+      "street": "Str. Campul Pipera nr. 125/9",
+      "postal_code": "",
+      "city": "Voluntari",
+      "country": "Romania"
+    },
+    "phone": "",
+    "email": "",
+    "notes": "Furnizor direct K-Goodies."
+  },
+  "promo-plus": {
+    "display_name": "Promo Plus SRL",
+    "roles": [
+      "supplier",
+      "distributor_ro"
+    ],
+    "address": {
+      "street": "Str. Lt. Nicolae Catanescu 7",
+      "postal_code": "",
+      "city": "Suceava",
+      "country": "Romania"
+    },
+    "phone": "",
+    "email": "",
+    "notes": "Furnizor direct K-Goodies."
+  },
+  "consali-expert": {
+    "display_name": "Consali Expert SRL",
+    "roles": [
+      "supplier",
+      "distributor_ro"
+    ],
+    "address": {
+      "street": "Str. Haller Karoly 35",
+      "postal_code": "",
+      "city": "Cluj-Napoca",
+      "country": "Romania"
+    },
+    "phone": "",
+    "email": "",
+    "notes": "Furnizor direct K-Goodies."
+  },
+  "taste-of-asia": {
+    "display_name": "Taste of Asia SRL",
+    "roles": [
+      "supplier",
+      "distributor_ro"
+    ],
+    "address": {
+      "street": "Str. Haller Karoly 35",
+      "postal_code": "",
+      "city": "Cluj-Napoca",
+      "country": "Romania"
+    },
+    "phone": "",
+    "email": "",
+    "notes": "Furnizor direct K-Goodies."
+  },
+  "example-cosmetics-europe": {
+    "display_name": "Example Cosmetics Europe GmbH",
+    "roles": [
+      "cosmetic_responsible_person"
+    ],
+    "address": {
+      "street": "Example Strasse 10",
+      "postal_code": "10115",
+      "city": "Berlin",
+      "country": "Germany"
+    },
+    "phone": "",
+    "email": "",
+    "notes": "Persoana responsabila UE indicata pe ambalaj."
+  },
+  "test-srl": {
+    "display_name": "Test SRL",
+    "roles": [
+      "food_responsible_operator",
+      "food_importer_eu"
+    ],
+    "address": {
+      "street": "Testului nr 125",
+      "postal_code": "",
+      "city": "Ghici",
+      "country": "Germania"
+    },
+    "phone": "",
+    "email": "",
+    "notes": "Adaugat din interfata K-Goodies Label Tool."
+  }
+}
