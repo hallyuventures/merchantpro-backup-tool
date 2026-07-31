@@ -17,6 +17,7 @@ from .blocks.preparation_block import PreparationBlock
 from .blocks.importer_block import ImporterBlock
 from .blocks.alcohol_block import AlcoholBlock
 
+
 class LabelEngine:
 
     def __init__(
@@ -32,21 +33,7 @@ class LabelEngine:
             style=self.style,
         )
 
-    def render(
-        self,
-        product,
-        output_path: str = "label_preview_new.png",
-    ):
-        width = self.context.printable_width_px
-
-        margin_px = self.context.mm_to_px(
-            self.context.style.margin_mm
-        )
-
-        min_height_px = self.context.mm_to_px(
-            self.printer.min_length_mm
-        )
-
+    def _build_blocks(self, product):
         title_spacing_px = self.context.mm_to_px(
             self.context.style.title_spacing_mm
         )
@@ -55,18 +42,7 @@ class LabelEngine:
             self.context.style.section_spacing_mm
         )
 
-        bottom_spacing_px = self.context.mm_to_px(
-            self.context.style.bottom_spacing_mm
-        )
-
-        temp_image = Image.new(
-            "RGB",
-            (width, 2000),
-            "white",
-        )
-        temp_draw = ImageDraw.Draw(temp_image)
-
-        blocks = [
+        return [
             (
                 TitleBlock(product, self.context),
                 title_spacing_px,
@@ -77,7 +53,7 @@ class LabelEngine:
             ),
             (
                 AlcoholBlock(product, self.context),
-                section_spacing_px,  
+                section_spacing_px,
             ),
             (
                 IngredientsBlock(product, self.context),
@@ -109,9 +85,27 @@ class LabelEngine:
             ),
         ]
 
+    def _measure(self, product):
+        width = self.context.printable_width_px
+
+        margin_px = self.context.mm_to_px(
+            self.context.style.margin_mm
+        )
+
+        bottom_spacing_px = self.context.mm_to_px(
+            self.context.style.bottom_spacing_mm
+        )
+
+        temp_image = Image.new(
+            "RGB",
+            (width, 4000),
+            "white",
+        )
+        temp_draw = ImageDraw.Draw(temp_image)
+
         measured_blocks = []
 
-        for block, spacing_after in blocks:
+        for block, spacing_after in self._build_blocks(product):
             layout = block.measure(
                 temp_draw,
                 self.context,
@@ -137,8 +131,6 @@ class LabelEngine:
                 0,
             )
 
-
-
         content_height = (
             margin_px
             + sum(
@@ -149,10 +141,82 @@ class LabelEngine:
             + margin_px
         )
 
-        final_height = max(
+        return measured_blocks, content_height
+
+    def measure_height_px(self, product) -> int:
+        _, content_height = self._measure(product)
+
+        min_height_px = self.context.mm_to_px(
+            self.printer.min_length_mm
+        )
+
+        return max(
             content_height,
             min_height_px,
         )
+
+    def measure_height_mm(self, product) -> float:
+        height_px = self.measure_height_px(product)
+        return height_px * 25.4 / self.printer.dpi
+
+    def fits_length_mm(
+        self,
+        product,
+        target_length_mm: float,
+    ) -> bool:
+        target_height_px = self.context.mm_to_px(
+            target_length_mm
+        )
+
+        return self.measure_height_px(product) <= target_height_px
+
+    def render(
+        self,
+        product,
+        output_path: str = "label_preview_new.png",
+        target_length_mm: float | None = None,
+    ):
+        width = self.context.printable_width_px
+
+        margin_px = self.context.mm_to_px(
+            self.context.style.margin_mm
+        )
+
+        measured_blocks, content_height = self._measure(product)
+
+        min_height_px = self.context.mm_to_px(
+            self.printer.min_length_mm
+        )
+
+        natural_height = max(
+            content_height,
+            min_height_px,
+        )
+
+        if target_length_mm is None:
+            final_height = natural_height
+        else:
+            if target_length_mm < self.printer.min_length_mm:
+                raise ValueError(
+                    "Lungimea aleasa este mai mica decat "
+                    f"minimul imprimantei: {self.printer.min_length_mm} mm."
+                )
+
+            final_height = self.context.mm_to_px(
+                target_length_mm
+            )
+
+            if natural_height > final_height:
+                required_mm = (
+                    natural_height
+                    * 25.4
+                    / self.printer.dpi
+                )
+
+                raise ValueError(
+                    "Continutul nu incape in lungimea aleasa. "
+                    f"Sunt necesari aproximativ {required_mm:.1f} mm."
+                )
 
         image = Image.new(
             "RGB",
@@ -161,7 +225,6 @@ class LabelEngine:
         )
 
         draw = ImageDraw.Draw(image)
-
         current_y = margin_px
 
         for block, layout, spacing_after in measured_blocks:

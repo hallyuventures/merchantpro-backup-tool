@@ -28,7 +28,7 @@ class LabelApp:
     def __init__(self, root: Tk):
         self.root = root
         self.root.title("K-Goodies Label Tool")
-        self.root.geometry("860x590")
+        self.root.geometry("900x690")
 
         self.backup_folder = Path("backup")
         self.current_product = None
@@ -70,7 +70,13 @@ class LabelApp:
             value="17"
         )
 
+        self.sizing_mode_var = StringVar(
+            value="auto_length"
+        )
 
+        self.fixed_length_var = StringVar(
+            value="90"
+        )
 
         self.status_var = StringVar(
             value="Selecteaza folderul de backup."
@@ -306,85 +312,150 @@ class LabelApp:
             pady=(0, 12),
         )
 
-        ttk.Label(
+        ttk.Radiobutton(
             size_frame,
-            text="Titlu:",
+            text="Font fix -> lungime automata",
+            variable=self.sizing_mode_var,
+            value="auto_length",
+            command=self._update_sizing_controls,
         ).grid(
             row=0,
             column=0,
+            columnspan=3,
             sticky="w",
         )
 
-        ttk.Spinbox(
+        ttk.Radiobutton(
+            size_frame,
+            text="Lungime fixa -> font automat",
+            variable=self.sizing_mode_var,
+            value="fixed_length",
+            command=self._update_sizing_controls,
+        ).grid(
+            row=0,
+            column=3,
+            columnspan=3,
+            padx=(25, 0),
+            sticky="w",
+        )
+
+        ttk.Label(
+            size_frame,
+            text="Titlu maxim:",
+        ).grid(
+            row=1,
+            column=0,
+            pady=(12, 0),
+            sticky="w",
+        )
+
+        self.title_font_spinbox = ttk.Spinbox(
             size_frame,
             from_=10,
             to=50,
             textvariable=self.title_font_size_var,
             width=7,
-        ).grid(
-            row=0,
+        )
+        self.title_font_spinbox.grid(
+            row=1,
             column=1,
             padx=(6, 18),
+            pady=(12, 0),
             sticky="w",
         )
 
         ttk.Label(
             size_frame,
-            text="Text:",
+            text="Text maxim:",
         ).grid(
-            row=0,
+            row=1,
             column=2,
+            pady=(12, 0),
             sticky="w",
         )
 
-        ttk.Spinbox(
+        self.body_font_spinbox = ttk.Spinbox(
             size_frame,
             from_=8,
             to=40,
             textvariable=self.body_font_size_var,
             width=7,
-        ).grid(
-            row=0,
+        )
+        self.body_font_spinbox.grid(
+            row=1,
             column=3,
             padx=(6, 18),
+            pady=(12, 0),
             sticky="w",
         )
 
         ttk.Label(
             size_frame,
-            text="Nutritie:",
+            text="Nutritie maxim:",
         ).grid(
-            row=0,
+            row=1,
             column=4,
+            pady=(12, 0),
             sticky="w",
         )
 
-        ttk.Spinbox(
+        self.nutrition_font_spinbox = ttk.Spinbox(
             size_frame,
             from_=8,
             to=40,
             textvariable=self.nutrition_font_size_var,
             width=7,
-        ).grid(
-            row=0,
+        )
+        self.nutrition_font_spinbox.grid(
+            row=1,
             column=5,
             padx=(6, 0),
+            pady=(12, 0),
             sticky="w",
         )
 
         ttk.Label(
             size_frame,
+            text="Lungime fixa (mm):",
+        ).grid(
+            row=2,
+            column=0,
+            pady=(12, 0),
+            sticky="w",
+        )
+
+        self.fixed_length_spinbox = ttk.Spinbox(
+            size_frame,
+            from_=25,
+            to=1000,
+            increment=1,
+            textvariable=self.fixed_length_var,
+            width=9,
+        )
+        self.fixed_length_spinbox.grid(
+            row=2,
+            column=1,
+            padx=(6, 18),
+            pady=(12, 0),
+            sticky="w",
+        )
+
+        self.sizing_help_label = ttk.Label(
+            size_frame,
             text=(
                 "Latimea ramane 62 mm; "
                 "lungimea se calculeaza automat."
             ),
-        ).grid(
-            row=1,
+        )
+        self.sizing_help_label.grid(
+            row=3,
             column=0,
             columnspan=6,
             pady=(10, 0),
             sticky="w",
         )
+
+        self._update_sizing_controls()
 
         action_frame = ttk.Frame(container)
         action_frame.pack(
@@ -716,6 +787,105 @@ class LabelApp:
 
         return True
 
+    def _update_sizing_controls(self) -> None:
+        fixed_mode = (
+            self.sizing_mode_var.get()
+            == "fixed_length"
+        )
+
+        self.fixed_length_spinbox.configure(
+            state=(
+                "normal"
+                if fixed_mode
+                else "disabled"
+            )
+        )
+
+        font_state = (
+            "disabled"
+            if fixed_mode
+            else "normal"
+        )
+
+        self.title_font_spinbox.configure(
+            state=font_state
+        )
+        self.body_font_spinbox.configure(
+            state=font_state
+        )
+        self.nutrition_font_spinbox.configure(
+            state=font_state
+        )
+
+        self.sizing_help_label.configure(
+            text=(
+                "Fonturile sunt calculate integral de aplicatie; "
+                "valorile manuale de mai sus sunt ignorate."
+                if fixed_mode
+                else (
+                    "Latimea ramane 62 mm; "
+                    "lungimea se calculeaza automat."
+                )
+            )
+        )
+
+    def _get_fixed_length_mm(self) -> float | None:
+        try:
+            length_mm = float(
+                self.fixed_length_var.get()
+                .strip()
+                .replace(",", ".")
+            )
+        except ValueError:
+            messagebox.showerror(
+                "Lungime invalida",
+                "Lungimea etichetei trebuie sa fie un numar.",
+            )
+            return None
+
+        if not 25 <= length_mm <= 1000:
+            messagebox.showerror(
+                "Lungime invalida",
+                "Lungimea trebuie sa fie intre 25 si 1000 mm.",
+            )
+            return None
+
+        return length_mm
+
+    def _find_largest_fitting_style(
+        self,
+        target_length_mm: float,
+    ) -> LabelStyle | None:
+        # In modul automat, valorile introduse manual nu sunt limite.
+        # Cautam direct cel mai mare corp de text posibil.
+        for body_size in range(40, 7, -1):
+            title_size = min(
+                50,
+                max(10, round(body_size * 24 / 17)),
+            )
+
+            nutrition_size = body_size
+
+            style = LabelStyle(
+                title_font_size=title_size,
+                heading_font_size=max(
+                    body_size - 1,
+                    8,
+                ),
+                body_font_size=body_size,
+                nutrition_font_size=nutrition_size,
+            )
+
+            engine = LabelEngine(style=style)
+
+            if engine.fits_length_mm(
+                self.current_product,
+                target_length_mm,
+            ):
+                return style
+
+        return None
+
     def _create_label_style(
         self,
     ) -> LabelStyle | None:
@@ -830,10 +1000,30 @@ class LabelApp:
             / f"{self.current_product.id}.png"
         )
 
-        style = self._create_label_style()
+        target_length_mm = None
 
-        if style is None:
-            return
+        if self.sizing_mode_var.get() == "fixed_length":
+            target_length_mm = self._get_fixed_length_mm()
+
+            if target_length_mm is None:
+                return
+
+            style = self._find_largest_fitting_style(
+                target_length_mm
+            )
+
+            if style is None:
+                messagebox.showwarning(
+                    "Eticheta prea scurta",
+                    "Continutul nu incape nici cu fonturile "
+                    "minime. Mareste lungimea etichetei.",
+                )
+                return
+        else:
+            style = self._create_label_style()
+
+            if style is None:
+                return
 
         try:
             LabelEngine(
@@ -841,6 +1031,7 @@ class LabelApp:
             ).render(
                 self.current_product,
                 str(output_path),
+                target_length_mm=target_length_mm,
             )
         except Exception as error:
             messagebox.showerror(
@@ -849,9 +1040,22 @@ class LabelApp:
             )
             return
 
-        self.status_var.set(
-            f"Preview generat: {output_path.name}"
-        )
+        if target_length_mm is None:
+            status = (
+                f"Preview generat: {output_path.name} | "
+                f"font {style.body_font_size}px | "
+                "lungime automata"
+            )
+        else:
+            status = (
+                f"Preview generat: {output_path.name} | "
+                f"{target_length_mm:g} mm | "
+                "font automat: "
+                f"titlu {style.title_font_size}px, "
+                f"text {style.body_font_size}px"
+            )
+
+        self.status_var.set(status)
 
         if os.name == "nt":
             os.startfile(output_path)

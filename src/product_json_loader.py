@@ -78,6 +78,29 @@ def clean_text(value: Any) -> str:
     return cleaned.strip()
 
 
+def preserve_nutrition(value: Any) -> str:
+    """
+    Păstrează structura HTML a valorilor nutriționale.
+
+    NutritionParser folosește tagurile <br>, <div>, <p> etc.
+    pentru a separa titlul și rândurile tabelului. Dacă HTML-ul
+    este aplatizat aici, parserul nu mai poate reconstrui tabelul.
+    """
+
+    if value is None:
+        return ""
+
+    if isinstance(value, float) and math.isnan(value):
+        return ""
+
+    text = str(value).strip()
+
+    if text.lower() in {"nan", "none", "null"}:
+        return ""
+
+    return text
+
+
 class ProductJSONLoader:
 
     @staticmethod
@@ -118,7 +141,7 @@ class ProductJSONLoader:
             allergens=clean_text(
                 data.get("allergens")
             ),
-            nutrition=clean_text(
+            nutrition=preserve_nutrition(
                 data.get("nutrition")
             ),
             preparation=clean_text(
@@ -133,11 +156,9 @@ class ProductJSONLoader:
             extra_info=clean_text(
                 data.get("extra_info")
             ),
-
             supplier=clean_text(
                 data.get("supplier")
             ),
-            
             importer_distributor=clean_text(
                 data.get("importer_distributor")
             ),

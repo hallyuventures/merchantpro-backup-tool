@@ -31,7 +31,7 @@ class _NutritionHTMLParser(HTMLParser):
     }
 
     def __init__(self):
-        super().__init__()
+        super().__init__(convert_charrefs=True)
 
         self.lines: list[str] = []
         self.current_parts: list[str] = []
@@ -47,8 +47,15 @@ class _NutritionHTMLParser(HTMLParser):
     def handle_data(self, data):
         text = unescape(data)
 
-        if text.strip():
-            self.current_parts.append(text)
+        # Suportă și text simplu care conține linii, nu doar HTML.
+        chunks = re.split(r"[\r\n]+", text)
+
+        for index, chunk in enumerate(chunks):
+            if chunk.strip():
+                self.current_parts.append(chunk)
+
+            if index < len(chunks) - 1:
+                self._flush_line()
 
     def _flush_line(self):
         text = " ".join(self.current_parts)
@@ -88,12 +95,12 @@ class NutritionParser:
     )
 
     @classmethod
-    def parse(cls, html: str | None) -> NutritionData:
-        if not html or not html.strip():
+    def parse(cls, source: str | None) -> NutritionData:
+        if not source or not source.strip():
             return NutritionData()
 
         parser = _NutritionHTMLParser()
-        parser.feed(html)
+        parser.feed(source)
         parser.close()
 
         lines = cls._clean_lines(parser.lines)
