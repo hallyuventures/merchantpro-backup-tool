@@ -15,6 +15,7 @@
     "usage": "<div><span style=\"font-size: 14pt; color: #000000;\">Produsul este gata de consum ca o gustare dulce.</span>\n<p data-path-to-node=\"10,0,0\"><span style=\"font-size: 14pt; color: #000000;\"><b data-path-to-node=\"10,0,0\" data-index-in-node=\"0\">Atentie:</b> Pentru a evita sufocarea, acest produs trebuie mestecat temeinic inainte de a fi inghitit.</span></p>\n</div>",
     "expiry": "<div><span style=\"color: #000000; font-size: 14pt;\">A se vedea pe ambalaj.</span></div>",
     "extra_info": "<div><span style=\"color: #000000; font-size: 14pt;\">A se pastra in loc <strong>racoros </strong>si<strong> uscat, </strong><strong>ferit</strong> <strong>de razele solare</strong>.&nbsp;</span></div>",
+    "supplier": "Mirasia Food SRL",
     "importer_distributor": "",
     "images": [
         "https://f.cdnmp.net/348087814/p/l/9/japanesetaromochifun-59b50ab1-1039-4742-a0fb-503fe855de6f-170348866~108280149.jpg",

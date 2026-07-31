@@ -23,6 +23,7 @@ class Product:
     usage: str
     expiry: str
     extra_info: str
+    supplier: str
     importer_distributor: str
 
     images: list[str] = field(default_factory=list)

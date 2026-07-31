@@ -133,6 +133,11 @@ class ProductJSONLoader:
             extra_info=clean_text(
                 data.get("extra_info")
             ),
+
+            supplier=clean_text(
+                data.get("supplier")
+            ),
+            
             importer_distributor=clean_text(
                 data.get("importer_distributor")
             ),

@@ -62,9 +62,11 @@ class ProductFactory:
                 row.get("Informatii suplimentare", "")
             ),
 
-            importer_distributor=str(
-                row.get("Importator/Distribuitor", "")
+            supplier=str(
+                row.get("Furnizor", "")
             ),
+            
+            importer_distributor="",
             
             images=product_images,
 
