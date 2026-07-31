@@ -21,14 +21,14 @@ from src.product_json_loader import ProductJSONLoader
 from src.product_operator_registry import (
     ProductOperatorRegistry,
 )
-
+from src.label.style import LabelStyle
 
 class LabelApp:
 
     def __init__(self, root: Tk):
         self.root = root
         self.root.title("K-Goodies Label Tool")
-        self.root.geometry("860x520")
+        self.root.geometry("860x590")
 
         self.backup_folder = Path("backup")
         self.current_product = None
@@ -57,6 +57,21 @@ class LabelApp:
         )
         self.operator_var = StringVar()
         self.distributor_var = StringVar()
+
+        self.title_font_size_var = StringVar(
+            value="24"
+        )
+
+        self.body_font_size_var = StringVar(
+            value="17"
+        )
+
+        self.nutrition_font_size_var = StringVar(
+            value="17"
+        )
+
+
+
         self.status_var = StringVar(
             value="Selecteaza folderul de backup."
         )
@@ -279,6 +294,96 @@ class LabelApp:
         operator_frame.columnconfigure(
             1,
             weight=1,
+        )
+
+        size_frame = ttk.LabelFrame(
+            container,
+            text="Dimensionare eticheta",
+            padding=12,
+        )
+        size_frame.pack(
+            fill="x",
+            pady=(0, 12),
+        )
+
+        ttk.Label(
+            size_frame,
+            text="Titlu:",
+        ).grid(
+            row=0,
+            column=0,
+            sticky="w",
+        )
+
+        ttk.Spinbox(
+            size_frame,
+            from_=10,
+            to=50,
+            textvariable=self.title_font_size_var,
+            width=7,
+        ).grid(
+            row=0,
+            column=1,
+            padx=(6, 18),
+            sticky="w",
+        )
+
+        ttk.Label(
+            size_frame,
+            text="Text:",
+        ).grid(
+            row=0,
+            column=2,
+            sticky="w",
+        )
+
+        ttk.Spinbox(
+            size_frame,
+            from_=8,
+            to=40,
+            textvariable=self.body_font_size_var,
+            width=7,
+        ).grid(
+            row=0,
+            column=3,
+            padx=(6, 18),
+            sticky="w",
+        )
+
+        ttk.Label(
+            size_frame,
+            text="Nutritie:",
+        ).grid(
+            row=0,
+            column=4,
+            sticky="w",
+        )
+
+        ttk.Spinbox(
+            size_frame,
+            from_=8,
+            to=40,
+            textvariable=self.nutrition_font_size_var,
+            width=7,
+        ).grid(
+            row=0,
+            column=5,
+            padx=(6, 0),
+            sticky="w",
+        )
+
+        ttk.Label(
+            size_frame,
+            text=(
+                "Latimea ramane 62 mm; "
+                "lungimea se calculeaza automat."
+            ),
+        ).grid(
+            row=1,
+            column=0,
+            columnspan=6,
+            pady=(10, 0),
+            sticky="w",
         )
 
         action_frame = ttk.Frame(container)
@@ -611,6 +716,64 @@ class LabelApp:
 
         return True
 
+    def _create_label_style(
+        self,
+    ) -> LabelStyle | None:
+        try:
+            title_size = int(
+                self.title_font_size_var.get()
+            )
+
+            body_size = int(
+                self.body_font_size_var.get()
+            )
+
+            nutrition_size = int(
+                self.nutrition_font_size_var.get()
+            )
+
+        except ValueError:
+            messagebox.showerror(
+                "Dimensiune invalida",
+                "Dimensiunile fonturilor trebuie "
+                "sa fie numere intregi.",
+            )
+            return None
+
+        if not 10 <= title_size <= 50:
+            messagebox.showerror(
+                "Titlu invalid",
+                "Fontul titlului trebuie sa fie "
+                "intre 10 si 50.",
+            )
+            return None
+
+        if not 8 <= body_size <= 40:
+            messagebox.showerror(
+                "Text invalid",
+                "Fontul textului trebuie sa fie "
+                "intre 8 si 40.",
+            )
+            return None
+
+        if not 8 <= nutrition_size <= 40:
+            messagebox.showerror(
+                "Nutritie invalida",
+                "Fontul nutritiei trebuie sa fie "
+                "intre 8 si 40.",
+            )
+            return None
+
+        return LabelStyle(
+            title_font_size=title_size,
+            heading_font_size=max(
+                body_size - 1,
+                8,
+            ),
+            body_font_size=body_size,
+            nutrition_font_size=nutrition_size,
+        )
+
     def generate_preview(self) -> None:
         if self.current_product is None:
             messagebox.showwarning(
@@ -667,8 +830,15 @@ class LabelApp:
             / f"{self.current_product.id}.png"
         )
 
+        style = self._create_label_style()
+
+        if style is None:
+            return
+
         try:
-            LabelEngine().render(
+            LabelEngine(
+                style=style
+            ).render(
                 self.current_product,
                 str(output_path),
             )
