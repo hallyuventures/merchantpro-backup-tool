@@ -26,6 +26,7 @@ def make_product(**changes) -> Product:
         "usage": "",
         "expiry": "A se vedea pe ambalaj.",
         "extra_info": "",
+        "supplier": "",
         "importer_distributor": "",
     }
 

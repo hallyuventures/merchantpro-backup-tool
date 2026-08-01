@@ -1,3 +1,9 @@
+# MerchantPro backups
+backup/
+backup_*/
+backups/
+*_backup/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

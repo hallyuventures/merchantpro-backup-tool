@@ -22,6 +22,7 @@ from src.product_operator_registry import (
     ProductOperatorRegistry,
 )
 from src.label.style import LabelStyle
+from src.label.windows_printer import WindowsLabelPrinter
 
 class LabelApp:
 
@@ -33,6 +34,7 @@ class LabelApp:
         self.backup_folder = Path("backup")
         self.current_product = None
         self.product_files: dict[int, Path] = {}
+        self.last_preview_path: Path | None = None
 
         self.operator_registry = OperatorRegistry(
             "data/operators.json"
@@ -469,6 +471,15 @@ class LabelApp:
             command=self.generate_preview,
         ).pack(side=LEFT)
 
+        ttk.Button(
+            action_frame,
+            text="Tipareste eticheta",
+            command=self.print_label,
+        ).pack(
+            side=LEFT,
+            padx=(10, 0),
+        )
+
         ttk.Label(
             action_frame,
             textvariable=self.status_var,
@@ -601,6 +612,8 @@ class LabelApp:
                 str(error),
             )
             return
+
+        self.last_preview_path = None
 
         self.product_name_var.set(
             self.current_product.name
@@ -1040,6 +1053,8 @@ class LabelApp:
             )
             return
 
+        self.last_preview_path = output_path
+
         if target_length_mm is None:
             status = (
                 f"Preview generat: {output_path.name} | "
@@ -1064,6 +1079,55 @@ class LabelApp:
                 "Preview generat",
                 str(output_path),
             )
+
+    def print_label(self) -> None:
+        if self.current_product is None:
+            messagebox.showwarning(
+                "Produs lipsa",
+                "Incarca mai intai un produs.",
+            )
+            return
+
+        if (
+            self.last_preview_path is None
+            or not self.last_preview_path.exists()
+        ):
+            messagebox.showwarning(
+                "Preview lipsa",
+                "Genereaza mai intai preview-ul etichetei.",
+            )
+            return
+
+        try:
+            printer = WindowsLabelPrinter(
+                printer_name="Brother QL-600",
+            )
+
+            printer.print_image(
+                self.last_preview_path,
+                job_name=(
+                    "K-Goodies Label "
+                    f"{self.current_product.id}"
+                ),
+            )
+
+        except Exception as error:
+            messagebox.showerror(
+                "Eroare tiparire",
+                str(error),
+            )
+            return
+
+        self.status_var.set(
+            "Eticheta a fost trimisa la imprimanta: "
+            f"{self.last_preview_path.name}"
+        )
+
+        messagebox.showinfo(
+            "Tiparire pornita",
+            "Eticheta a fost trimisa catre "
+            "Brother QL-600.",
+        )
 
     def _build_legal_text(
         self,

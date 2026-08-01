@@ -4,6 +4,7 @@ from PIL import Image
 from PIL import ImageWin
 
 import win32con
+import win32gui
 import win32print
 import win32ui
 
@@ -32,7 +33,8 @@ class WindowsLabelPrinter:
                 f"Imaginea nu exista: {image_path}"
             )
 
-        image = Image.open(image_path).convert("RGB")
+        with Image.open(image_path) as source:
+            image = source.convert("RGB")
 
         label_length_mm = (
             image.height * 25.4 / self.dpi
@@ -41,6 +43,9 @@ class WindowsLabelPrinter:
         printer_handle = win32print.OpenPrinter(
             self.printer_name
         )
+
+        printer_dc = None
+        hdc = None
 
         try:
             printer_info = win32print.GetPrinter(
@@ -58,15 +63,29 @@ class WindowsLabelPrinter:
                 label_length_mm * 10
             )
 
+            devmode.Orientation = win32con.DMORIENT_PORTRAIT
+
             devmode.Fields |= (
                 win32con.DM_PAPERSIZE
                 | win32con.DM_PAPERWIDTH
                 | win32con.DM_PAPERLENGTH
+                | win32con.DM_ORIENTATION
             )
 
-            printer_dc = win32ui.CreateDC()
-            printer_dc.CreatePrinterDC(
-                self.printer_name
+            # Creeaza DC-ul folosind explicit configuratia custom.
+            hdc = win32gui.CreateDC(
+                "WINSPOOL",
+                self.printer_name,
+                None,
+            )
+
+            hdc = win32gui.ResetDC(
+                hdc,
+                devmode,
+            )
+            
+            printer_dc = win32ui.CreateDCFromHandle(
+                hdc
             )
 
             printable_width = printer_dc.GetDeviceCaps(
@@ -76,37 +95,31 @@ class WindowsLabelPrinter:
                 win32con.VERTRES
             )
 
-            physical_width = printer_dc.GetDeviceCaps(
-                win32con.PHYSICALWIDTH
-            )
-            physical_offset_x = printer_dc.GetDeviceCaps(
-                win32con.PHYSICALOFFSETX
-            )
-            physical_offset_y = printer_dc.GetDeviceCaps(
-                win32con.PHYSICALOFFSETY
+            width_difference = abs(
+                printable_width - image.width
             )
 
-            scale = min(
-                printable_width / image.width,
-                printable_height / image.height,
-            )
+            if width_difference > 5:
+                raise ValueError(
+                    "Latimea PNG-ului nu corespunde cu "
+                    "latimea imprimabila a driverului. "
+                    f"PNG: {image.width}px; "
+                    f"driver: {printable_width}px."
+                )
 
-            target_width = round(
-                image.width * scale
-            )
-            target_height = round(
-                image.height * scale
-            )
-
+            # Nu redimensionam imaginea. O centram doar daca
+            # driverul raporteaza o diferenta de cativa pixeli.
             x = max(
-                physical_offset_x,
-                (
-                    physical_width
-                    - target_width
-                ) // 2,
+                0,
+                (printable_width - image.width) // 2,
             )
+            y = 0
 
-            y = physical_offset_y
+            target_width = image.width
+            target_height = min(
+                image.height,
+                printable_height,
+            )
 
             dib = ImageWin.Dib(image)
 
@@ -125,9 +138,13 @@ class WindowsLabelPrinter:
 
             printer_dc.EndPage()
             printer_dc.EndDoc()
-            printer_dc.DeleteDC()
 
         finally:
+            if printer_dc is not None:
+                printer_dc.DeleteDC()
+
+            # CreateDCFromHandle preia gestionarea handle-ului;
+            # nu apelam DeleteDC separat asupra aceluiasi HDC.
             win32print.ClosePrinter(
                 printer_handle
             )

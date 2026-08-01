@@ -3,8 +3,20 @@
     "responsible_operator_id": "panasia-handels-gmbh",
     "distributor_id": "mirasia-food"
   },
-  "432": {
-    "responsible_operator_id": "asian-merchant-europe",
+  "368": {
+    "responsible_operator_id": "test-srl",
+    "distributor_id": "front-row-inc"
+  },
+  "433": {
+    "responsible_operator_id": "example-cosmetics-europe",
     "distributor_id": "consali-expert"
+  },
+  "404": {
+    "responsible_operator_id": "example-cosmetics-europe",
+    "distributor_id": "promo-plus"
+  },
+  "416": {
+    "responsible_operator_id": "example-cosmetics-europe",
+    "distributor_id": "mirasia-food"
   }
 }
